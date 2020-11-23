@@ -15,9 +15,9 @@ class MyApp(QWidget):
         self.initUI()
 
     def initUI(self):
-        self.neutral=QPixmap('neutral.png')
-        self.doubt=QPixmap('doubt.png')
-        self.question=QPixmap('question_sizeup.png')
+        self.neutral=QPixmap('public/neutral.png')
+        self.doubt=QPixmap('public/doubt.png')
+        self.question=QPixmap('public/question_sizeup.png')
         self.question=self.question.scaledToWidth(200)
 
         self.lbl_img=QLabel()
@@ -27,7 +27,7 @@ class MyApp(QWidget):
 
 
         btn=QPushButton(self)
-        btn.setIcon(QIcon('question.png'))
+        btn.setIcon(QIcon('public/question.png'))
         btn.setCheckable(True)
         btn.clicked.connect(self.btn_clicked)
 
