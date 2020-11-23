@@ -16,9 +16,15 @@ class MyApp(QWidget):
 
     def initUI(self):
         self.neutral=QPixmap('public/neutral.png')
-        self.doubt=QPixmap('public/doubt.png')
         self.question=QPixmap('public/question_sizeup.png')
         self.question=self.question.scaledToWidth(200)
+        self.doubt = QPixmap('public/doubt.png')
+        self.tired=QPixmap('public/tired.png')
+        self.being_left=QPixmap('public/being left.png')
+        self.yes=QPixmap('public/yes.png')
+        self.no=QPixmap('public/no.png')
+
+
 
         self.lbl_img=QLabel()
         self.lbl_img.setPixmap(self.neutral)
@@ -27,27 +33,58 @@ class MyApp(QWidget):
 
 
         btn=QPushButton(self)
+        self.btn2 = QPushButton()
+        self.btn2.setText("back")
+        self.bt2=0
         btn.setIcon(QIcon('public/question.png'))
-        btn.setCheckable(True)
         btn.clicked.connect(self.btn_clicked)
-
-        vbox=QVBoxLayout()
-
-        vbox.addWidget(self.lbl_img)
-        vbox.addWidget(btn)
+        self.btn2.clicked.connect(self.btn2_clicked)
 
 
-        self.setLayout(vbox)
+        self.vbox=QVBoxLayout()
+
+        self.vbox.addWidget(self.lbl_img)
+        self.vbox.addWidget(btn)
+
+
+
+
+        self.setLayout(self.vbox)
         self.setWindowTitle('Untacticon UI')
         self.resize(200,300)
         self.center()
         self.show()
 
+
+
+
     def btn_clicked(self):
         #QMessageBox.about(self,"message","질문하였습니다.")
         self.lbl_img.setPixmap(self.question)
-        time.sleep(1)
-        #self.lbl_img.setPixmap(self.doubt)
+        self.bt2=self.vbox.addWidget(self.btn2)
+
+    def btn2_clicked(self):
+        self.lbl_img.setPixmap(self.neutral)
+        self.vbox.itemAt(2).widget().setParent(None)
+
+    def keyPressEvent(self, e):
+        if e.key()==Qt.Key_1:
+            self.lbl_img.setPixmap(self.neutral)
+        elif e.key()==Qt.Key_2:
+            self.lbl_img.setPixmap(self.doubt)
+        elif e.key()==Qt.Key_3:
+            self.lbl_img.setPixmap(self.tired)
+        elif e.key()==Qt.Key_4:
+            self.lbl_img.setPixmap(self.being_left)
+        elif e.key()==Qt.Key_5:
+            self.lbl_img.setPixmap(self.yes)
+        elif e.key()==Qt.Key_6:
+            self.lbl_img.setPixmap(self.no)
+
+
+
+
+
 
 
 
