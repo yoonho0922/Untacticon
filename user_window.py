@@ -1,11 +1,11 @@
 import sys
+import time
 from PyQt5.QtWidgets import QApplication, QWidget, QDesktopWidget, QPushButton,QVBoxLayout,QLabel,QHBoxLayout
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import*
 from PyQt5.QtCore import *
-from PyQt5.QtCore import Qt
 
 
 
@@ -15,34 +15,41 @@ class MyApp(QWidget):
         self.initUI()
 
     def initUI(self):
-        neutral=QPixmap('public/neutral.png')
+        self.neutral=QPixmap('neutral.png')
+        self.doubt=QPixmap('doubt.png')
+        self.question=QPixmap('question_sizeup.png')
+        self.question=self.question.scaledToWidth(200)
 
-        lbl_img=QLabel()
-        lbl_img.setPixmap(neutral)
+        self.lbl_img=QLabel()
+        self.lbl_img.setPixmap(self.neutral)
+
+
+
 
         btn=QPushButton(self)
-        btn.setIcon(QIcon('public/question_button.png'))
+        btn.setIcon(QIcon('question.png'))
         btn.setCheckable(True)
         btn.clicked.connect(self.btn_clicked)
 
-        btn.resize(300,50)
-
         vbox=QVBoxLayout()
-        hbox=QHBoxLayout()
 
-        hbox.addWidget(btn)
+        vbox.addWidget(self.lbl_img)
+        vbox.addWidget(btn)
 
-        vbox.addWidget(lbl_img)
-        vbox.addLayout(hbox)
 
         self.setLayout(vbox)
-        self.setWindowTitle('user window')
+        self.setWindowTitle('Untacticon UI')
         self.resize(200,300)
         self.center()
         self.show()
 
     def btn_clicked(self):
-        QMessageBox.about(self,"message","Student 질문!")
+        #QMessageBox.about(self,"message","질문하였습니다.")
+        self.lbl_img.setPixmap(self.question)
+        time.sleep(1)
+        #self.lbl_img.setPixmap(self.doubt)
+
+
 
     def center(self):
         qr=self.frameGeometry()
