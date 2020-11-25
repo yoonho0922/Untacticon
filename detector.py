@@ -76,11 +76,12 @@ class MyDetector:
 
         # video stream 시작
         print('start video stream')
-        vs = VideoStream(0).start()
+        ##### Modify Part 1 #####
+        # vs = VideoStream(0).start()
+        cap = cv2.VideoCapture(0)
+        ##########################
+
         time.sleep(2.0)
-
-
-
 
         print('start detecting')
         while True:
@@ -94,9 +95,12 @@ class MyDetector:
                 state = 4
                 state_changed.emit('{}'.format(state))
 
-            frame = vs.read()
-            frame = imutils.resize(frame, width=600)
+            ##### Modify Part 2 #####
+            # frame = vs.read()
+            ret, frame = cap.read()
+            # frame = imutils.resize(frame, width=600)
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            ##########################
 
             rects = detector(gray, 0)
 
@@ -113,7 +117,6 @@ class MyDetector:
 
 
             detect_changed.emit('{}'.format(detect))
-
 
             cv2.imshow("webcam", frame)
             key = cv2.waitKey(1) & 0xFF
