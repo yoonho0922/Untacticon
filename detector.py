@@ -10,6 +10,10 @@ from scipy.spatial import distance as dist
 
 class MyDetector:
 
+    # left 관련
+    LEFT_COUNTER = 0
+    SLEEP_CONSEC_FRAMES = 100
+
     # sleep 관련
     STATE = "normal"
     COUNTER = 0
@@ -81,21 +85,32 @@ class MyDetector:
         print('start detecting')
         while True:
 
+            # 인식 여부 (detect) 관련
+            detect = "0"
+
+            # 자리 비움 관련
+            self.LEFT_COUNTER += 1
+            if self.LEFT_COUNTER > self.SLEEP_CONSEC_FRAMES:
+                state = 4
+                state_changed.emit('{}'.format(state))
+
             frame = vs.read()
             frame = imutils.resize(frame, width=600)
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
             rects = detector(gray, 0)
 
-            detect = "0"
-
             for rect in rects:
                 shape = predictor(gray, rect)
                 shape = face_utils.shape_to_np(shape)
 
+                # 졸음 감지
                 self.detect_sleep(shape, frame, state, state_changed)
 
+                # 인식 됐을 때 관련 변수 변경
                 detect = "1"
+                self.LEFT_COUNTER = 0
+
 
             detect_changed.emit('{}'.format(detect))
 
