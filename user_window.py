@@ -73,7 +73,7 @@ class MyMain(MyMainGUI):
             self.detectText.setText("인식 안됨")
         elif msg == "1":
             self.detectDot.setPixmap(self.detect_on)
-            self.detectText.setText("인식 됨")
+            self.detectText.setText("인식 중")
 
     @pyqtSlot(str)
     def state_update(self, msg):

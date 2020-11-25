@@ -75,8 +75,7 @@ class MyDetector:
         vs = VideoStream(0).start()
         time.sleep(2.0)
 
-        detect = "1"
-        detect_changed.emit('{}'.format(detect))
+
 
 
         print('start detecting')
@@ -88,12 +87,17 @@ class MyDetector:
 
             rects = detector(gray, 0)
 
+            detect = "0"
+
             for rect in rects:
                 shape = predictor(gray, rect)
                 shape = face_utils.shape_to_np(shape)
 
                 self.detect_sleep(shape, frame, state, state_changed)
 
+                detect = "1"
+
+            detect_changed.emit('{}'.format(detect))
 
 
             cv2.imshow("webcam", frame)
