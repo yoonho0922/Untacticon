@@ -8,16 +8,16 @@ class MyMainGUI(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.detect_on=QPixmap('public/detect_on.png').scaledToWidth(10)
+        self.detect_on=QPixmap('public/detect_on.png')
         self.detect_off=QPixmap('public/detect_off.png')
-
-        self.neutral=QPixmap('public/neutral.png')
-        self.question=QPixmap('public/question_sizeup.png')
-        self.doubt = QPixmap('public/doubt.png')
-        self.tired=QPixmap('public/tired.png')
-        self.being_left=QPixmap('public/being left.png')
-        self.yes=QPixmap('public/yes.png')
-        self.no=QPixmap('public/no.png')
+        # 이모티콘
+        self.neutral=QPixmap('public/neutral.png').scaledToWidth(200)
+        self.question=QPixmap('public/question_sizeup.png').scaledToWidth(200)
+        self.doubt = QPixmap('public/doubt.png').scaledToWidth(200)
+        self.tired=QPixmap('public/sleep.png').scaledToWidth(200)
+        self.left=QPixmap('public/left.png').scaledToWidth(200)
+        self.yes=QPixmap('public/yes.png').scaledToWidth(200)
+        self.no=QPixmap('public/no.png').scaledToWidth(200)
 
         # 얼굴인식 여부
         self.detectDot = QLabel()
@@ -84,7 +84,7 @@ class MyMain(MyMainGUI):
         elif msg == "3":
             self.userEmoticon.setPixmap(self.tired)
         elif msg == "4":
-            self.userEmoticon.setPixmap(self.being_left)
+            self.userEmoticon.setPixmap(self.left)
         elif msg == "5":
             self.userEmoticon.setPixmap(self.yes)
         elif msg == "6":
