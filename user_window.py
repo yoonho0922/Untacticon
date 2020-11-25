@@ -58,11 +58,22 @@ class MyMain(MyMainGUI):
 
         # video 스레드
         self.th = Worker(parent=self)
-        self.th.sec_changed.connect(self.state_update)  # custom signal from worker thread to main thread
+        self.th.detect_changed.connect(self.detect_update)  # custom signal from worker thread to main thread
+        self.th.state_changed.connect(self.state_update)  # custom signal from worker thread to main thread
         self.th.start()
         self.th.working = True
         
         self.show()
+
+    @pyqtSlot(str)
+    def detect_update(self, msg):
+        # 검출 안됨
+        if msg == "0":
+            self.detectDot.setPixmap(self.detect_off)
+            self.detectText.setText("인식 안됨")
+        elif msg == "1":
+            self.detectDot.setPixmap(self.detect_on)
+            self.detectText.setText("인식 됨")
 
     @pyqtSlot(str)
     def state_update(self, msg):
@@ -82,12 +93,14 @@ class MyMain(MyMainGUI):
 
 
 class Worker(QThread):
-    sec_changed = pyqtSignal(str)
+    detect_changed = pyqtSignal(str)
+    state_changed = pyqtSignal(str)
 
-    def __init__(self, state=0, parent=None):
+    def __init__(self, detect = 0,state=0, parent=None):
         super().__init__()
         self.main = parent
         self.working = True
+        self.detect = detect
         self.state = state
 
         # self.main.add_sec_signal.connect(self.add_sec)   # 이것도 작동함. # custom signal from main thread to worker thread
@@ -99,7 +112,7 @@ class Worker(QThread):
     def run(self):
 
         md = detector.MyDetector()
-        md.video(self.state, self.sec_changed)
+        md.video(self.detect, self.detect_changed, self.state, self.state_changed)
 
 
 

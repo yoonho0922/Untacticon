@@ -16,7 +16,7 @@ class MyDetector:
     TOTAL = 0
 
     EYE_AR_THRESH = 0.3
-    SLEEP_CONSEC_FRAMES = 60
+    SLEEP_CONSEC_FRAMES = 30
 
     (lStart, lEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]
     (rStart, rEnd) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]
@@ -61,7 +61,7 @@ class MyDetector:
         # cv2.putText(frame, "USER STATE: {}".format(self.STATE), (300, 30),
         #             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
-    def video(self, state, state_changed):
+    def video(self, detect, detect_changed, state, state_changed):
 
 
 
@@ -74,6 +74,10 @@ class MyDetector:
         print('start video stream')
         vs = VideoStream(0).start()
         time.sleep(2.0)
+
+        detect = "1"
+        detect_changed.emit('{}'.format(detect))
+
 
         print('start detecting')
         while True:
