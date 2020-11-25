@@ -17,13 +17,8 @@ import numpy as np
 class MyDetector:
     # 전역 변수
 
-    lk_params = dict(winSize=(15, 15),
-                     maxLevel=2,
-                     criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
 
-    cap = cv2.VideoCapture(0)
-    fourcc = cv2.VideoWriter_fourcc(*'XVID')
-    out = cv2.VideoWriter('./hello.avi', fourcc, 20.0, (1024, 768))  # 창 크기 조절
+
 
     # define movement threshodls
     max_head_movement = 20
@@ -71,6 +66,15 @@ class MyDetector:
 
 
     def video(self):
+
+        lk_params = dict(winSize=(15, 15),
+                         maxLevel=2,
+                         criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
+
+        cap = cv2.VideoCapture(0)
+        fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        out = cv2.VideoWriter('./hello.avi', fourcc, 20.0, (1024, 768))  # 창 크기 조절
+
         # initialize dlib's face detector (HOG-based) and then create
         # the facial landmark predictor
         print("[INFO] loading facial landmark predictor...")
@@ -97,97 +101,76 @@ class MyDetector:
             for rect in rects:
                 shape = predictor(frame_gray, rect)
                 shape = face_utils.shape_to_np(shape)
-                x_center, y_center = shape[30]  # 34는 너무 콧구멍
-                x_up, y_up = shape[28]
-                x_down, y_down = shape[8]
+                self.x_center, self.y_center = shape[30]  # 34는 너무 콧구멍
+                self.x_up, self.y_up = shape[28]
+                self.x_down, self.y_down = shape[8]
 
             ## 찾은 좌표 사용하여 광학 흐름 측정하기
-            face_up = x_up, y_up
+            face_up = self.x_up, self.y_up
             p0_up = np.array([[face_up]], np.float32)
-            face_center = x_center, y_center  # 특정 부위 좌표 저장
+            face_center = self.x_center, self.y_center  # 특정 부위 좌표 저장
             p0_center = np.array([[face_center]], np.float32)  # Numpy array로 형변환
-            face_down = x_down, y_down
+            face_down = self.x_down, self.y_down
             p0_down = np.array([[face_down]], np.float32)
 
-            p1_up, st, err = cv2.calcOpticalFlowPyrLK(old_gray, frame_gray, p0_up, None,
-                                                      **lk_params)  # 광학 흐름 함수 사용하여 점 추적
-            p1_center, st, err = cv2.calcOpticalFlowPyrLK(old_gray, frame_gray, p0_center, None,
-                                                          **lk_params)  # 광학 흐름 함수 사용하여 점 추적
-            p1_down, st, err = cv2.calcOpticalFlowPyrLK(old_gray, frame_gray, p0_down, None,
-                                                        **lk_params)  # 광학 흐름 함수 사용하여 점 추적
+            p1_up, st, err = cv2.calcOpticalFlowPyrLK(old_gray, frame_gray, p0_up, None, **lk_params)
+            p1_center, st, err = cv2.calcOpticalFlowPyrLK(old_gray, frame_gray, p0_center, None, **lk_params)
+            p1_down, st, err = cv2.calcOpticalFlowPyrLK(old_gray, frame_gray, p0_down, None, **lk_params)
 
-            cv2.circle(frame, get_coords(p0_up), 3, (0, 255, 0))
-            cv2.circle(frame, get_coords(p1_up), 3, (255, 0, 0), -1)  # 파란색이 따라다니는 점
-            cv2.circle(frame, get_coords(p0_center), 3, (0, 0, 255))  # 빨간색이 나한테 붙어있는 점
-            cv2.circle(frame, get_coords(p1_center), 3, (255, 0, 0), -1)  # 파란색이 따라다니는 점
-            cv2.circle(frame, get_coords(p0_down), 3, (0, 255, 0))
-            cv2.circle(frame, get_coords(p1_down), 3, (255, 0, 0), -1)  # 파란색이 따라다니는 점
+            cv2.circle(frame, self.get_coords(p0_up), 3, (0, 255, 0))
+            cv2.circle(frame, self.get_coords(p1_up), 3, (255, 0, 0), -1)  # 파란색이 따라다니는 점
+            cv2.circle(frame, self.get_coords(p0_center), 3, (0, 0, 255))  # 빨간색이 나한테 붙어있는 점
+            cv2.circle(frame, self.get_coords(p1_center), 3, (255, 0, 0), -1)  # 파란색이 따라다니는 점
+            cv2.circle(frame, self.get_coords(p0_down), 3, (0, 255, 0))
+            cv2.circle(frame, self.get_coords(p1_down), 3, (255, 0, 0), -1)  # 파란색이 따라다니는 점
 
             ## 정수로 좌표화
-            a_up, b_up = get_coords(p0_up), get_coords(p1_up)
-            a_down, b_down = get_coords(p0_down), get_coords(p1_down)
+            a_up, b_up = self.get_coords(p0_up), self.get_coords(p1_up)
+            a_down, b_down = self.get_coords(p0_down), self.get_coords(p1_down)
 
-            a, b = get_coords(p0_center), get_coords(p1_center)
-            print("p0_center is ", p0_center)
-            print("p1_center is ", p1_center)
-            print("a is ", a)
-            print("b is ", b)
+            a, b = self.get_coords(p0_center), self.get_coords(p1_center)
 
             ## 움직임 최소화하기
             if abs(a[0] - b[0]) > 5 or abs(
-                    a[1] - b[1]) > 5 and x_movement > 0 and y_movement > 0:  # 이것에 대한 임계값은 해보면서 계속 찾아보기
-                x_movement += abs(a[0] - b[0])
-                y_movement += abs(a[1] - b[1])
-                gradient_a += (x_movement / y_movement) + 1
-                gradient_b += (y_movement / x_movement) + 1
-
-            print("x_movement is ", x_movement)
-            print("y_movement is ", y_movement)
-            print("gesture_show is ", gesture_show)
+                    a[1] - b[1]) > 5 and self.x_movement > 0 and self.y_movement > 0:  # 이것에 대한 임계값은 해보면서 계속 찾아보기
+                self.x_movement += abs(a[0] - b[0])
+                self.y_movement += abs(a[1] - b[1])
+                self.gradient_a += (self.x_movement / self.y_movement) + 1
+                self.gradient_b += (self.y_movement / self.x_movement) + 1
 
             ## movement 글씨로 표시
-            text = 'x_movement: ' + str(x_movement)
-            if not gesture: cv2.putText(frame, text, (50, 50), font, 0.8, (0, 0, 255), 2)  # x_movement 글씨 표시
-            text = 'y_movement: ' + str(y_movement)
-            if not gesture: cv2.putText(frame, text, (50, 100), font, 0.8, (0, 0, 255), 2)  # y_movement 글씨 표시
+            text = 'x_movement: ' + str(self.x_movement)
+            if not self.gesture: cv2.putText(frame, text, (50, 50), self.font, 0.8, (0, 0, 255), 2)  # x_movement 글씨 표시
+            text = 'y_movement: ' + str(self.y_movement)
+            if not self.gesture: cv2.putText(frame, text, (50, 100), self.font, 0.8, (0, 0, 255), 2)  # y_movement 글씨 표시
 
-            if x_movement > gesture_threshold or y_movement > gesture_threshold:
-                if x_movement > gesture_threshold and keep_cnt <= 0:
-                    print(">>> Gesture is No, x_movement is ", x_movement)
-                    gesture = 'No'
-                    keep_cnt = 20
+            if self.x_movement > self.gesture_threshold or self.y_movement > self.gesture_threshold:
+                if self.x_movement > self.gesture_threshold and self.keep_cnt <= 0:
+                    print(">>> Gesture is No, x_movement is ", self.x_movement)
+                    self.gesture = 'No'
+                    self.keep_cnt = 20
 
-                if y_movement > gesture_threshold and keep_cnt <= 0:
-                    print(">>> Gesture is Yes, y movement is ", y_movement)
-                    gesture = 'Yes'
-                    keep_cnt = 20
-
-                print("abs(a_cot - b_cot) is ", abs(a_cot - b_cot))
+                if self.y_movement > self.gesture_threshold and self.keep_cnt <= 0:
+                    print(">>> Gesture is Yes, y movement is ", self.y_movement)
+                    self.gesture = 'Yes'
+                    self.keep_cnt = 20
 
             else:
                 if abs(a_up[0] - a_down[0]) >= 1 and abs(b_up[0] - b_down[0]) >= 1:
-                    a_cot = abs(a_up[0] - a_down[0]) / abs(a_up[1] - a_down[1]) * 100
-                    b_cot = abs(b_up[0] - b_down[0]) / abs(b_up[1] - b_down[1]) * 100
-                    print("cot is ", a_cot)
-                    print("cot is ", b_cot)
+                    self.a_cot = abs(a_up[0] - a_down[0]) / abs(a_up[1] - a_down[1]) * 100
+                    self.b_cot = abs(b_up[0] - b_down[0]) / abs(b_up[1] - b_down[1]) * 100
 
-                    print(" >>>> Two cot size is ", abs(a_cot - b_cot))
-                    print("abs(a_cot - b_cot) is ", abs(a_cot - b_cot))
-                    print("maximum(gradient_a/gradient_b, gradient_b/gradient_a) is ",
-                          maximum(gradient_a / gradient_b, gradient_b / gradient_a))
+                    if abs(self.a_cot - self.b_cot) > 10 and abs(self.a_cot - self.b_cot) < 20 \
+                            and self.maximum(self.gradient_a / self.gradient_b, self.gradient_b / self.gradient_a) < 8 and self.keep_cnt <= 0:
+                        self.gesture = 'Doubt'
+                        self.keep_cnt = 10
 
-                    if abs(a_cot - b_cot) > 10 and abs(a_cot - b_cot) < 20 and maximum(gradient_a / gradient_b,
-                                                                                       gradient_b / gradient_a) < 8 and keep_cnt <= 0:  # 얘가 아무때나 안 나오도록 제한 조건을 걸어주는 것도 나쁘지 않음
-                        print(">>> Gesture is Doubt")
-                        gesture = 'Doubt'
-                        keep_cnt = 10
-
-            text = 'gradient_a: ' + str(gradient_a)
-            if not gesture: cv2.putText(frame, text, (50, 150), font, 0.8, (255, 0, 0), 2)
-            text = 'gradient_b: ' + str(gradient_b)
-            if not gesture: cv2.putText(frame, text, (50, 200), font, 0.8, (255, 0, 0), 2)
-            text = 'Doubt: ' + str(abs(a_cot - b_cot))
-            if not gesture: cv2.putText(frame, text, (50, 250), font, 0.8, (255, 0, 0), 2)
+            text = 'gradient_a: ' + str(self.gradient_a)
+            if not self.gesture: cv2.putText(frame, text, (50, 150), self.font, 0.8, (255, 0, 0), 2)
+            text = 'gradient_b: ' + str(self.gradient_b)
+            if not self.gesture: cv2.putText(frame, text, (50, 200), self.font, 0.8, (255, 0, 0), 2)
+            text = 'Doubt: ' + str(abs(self.a_cot - self.b_cot))
+            if not self.gesture: cv2.putText(frame, text, (50, 250), self.font, 0.8, (255, 0, 0), 2)
             ## gesture 임계값을 넘기면 긍정 및 부정 인식식
             # 도리도리는 150 / 끄덕끄덕은 30 정도 움직임
             # 원래는 gesture_threshold 값을 가짐
@@ -199,34 +182,32 @@ class MyDetector:
             # 각 증분에 대한 기울기
 
             ## 긍정 혹은 부정 표현이 감지되었을 때 이를 얼마나 유지할 것인가
-            if gesture and gesture_show > 0:
-                cv2.putText(frame, 'Gesture Detected: ' + gesture, (50, 50), font, 1.2, (0, 0, 255), 3)
-                gesture_show -= 1  # 1씩 감소
+            if self.gesture and self.gesture_show > 0:
+                cv2.putText(frame, 'Gesture Detected: ' + self.gesture, (50, 50), self.font, 1.2, (0, 0, 255), 3)
+                self.gesture_show -= 1  # 1씩 감소
 
             ## 0까지 갔을 때는 다시 특정 임계값으로 올린 다음에 다시 시작
-            if gesture_show == 0:
-                gesture = False
-                x_movement = 1
-                y_movement = 1  # 움직임이 없으면 0으로 초기화시키네
-                gradient_a = 1
-                gradient_b = 1
-                gesture_show = 20  # number of frames a gesture is shown
+            if self.gesture_show == 0:
+                self.gesture = False
+                self.x_movement = 1
+                self.y_movement = 1  # 움직임이 없으면 0으로 초기화시키네
+                self.gradient_a = 1
+                self.gradient_b = 1
+                self.gesture_show = 20  # number of frames a gesture is shown
 
             ##### 고개가 자연스럽게 움직일 수 있는 부분에서 허용되는 범위 #####
             # 자연스럽게 고개가 움직이는 부분은 어떻게 할 것이냐
             # 근데 이 count가 Gesture를 파악하는데 걸림돌이 되면 안된다
-            if stop_cnt > 30:  # 30 정도면 되는 것이냐
-                x_movement = 1
-                y_movement = 1
-                gradient_a = 1
-                gradient_b = 1
-                stop_cnt = 0
+            if self.stop_cnt > 30:  # 30 정도면 되는 것이냐
+                self.x_movement = 1
+                self.y_movement = 1
+                self.gradient_a = 1
+                self.gradient_b = 1
+                self.stop_cnt = 0
 
-            stop_cnt += 1
-            keep_cnt = keep_cnt - 1
+            self.stop_cnt += 1
+            self.keep_cnt = self.keep_cnt - 1
 
-            out.write(frame)
-            cv2.waitKey(1)
 
             ## 화면에 보여주고 종료 커맨드
             cv2.imshow("Frame", frame)
@@ -238,9 +219,6 @@ class MyDetector:
             # Deallocation
         cv2.destroyAllWindows()
 
-
-    # Deallocation
-    cv2.destroyAllWindows()
 
 if __name__=='__main__':
 
