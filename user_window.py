@@ -3,8 +3,11 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QPixmap
 import detector
 from PyQt5.QtGui import QIcon
-
+import time
 class MyMainGUI(QDialog):
+
+    question_cnt = 0
+
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -12,7 +15,7 @@ class MyMainGUI(QDialog):
         self.detect_off=QPixmap('public/detect_off.png')
         # 이모티콘
         self.neutral=QPixmap('public/neutral.png').scaledToWidth(200)
-        self.question=QPixmap('public/question_sizeup.png').scaledToWidth(200)
+        self.question=QPixmap('public/question.png').scaledToWidth(200)
         self.doubt = QPixmap('public/doubt.png').scaledToWidth(200)
         self.tired=QPixmap('public/sleep.png').scaledToWidth(200)
         self.left=QPixmap('public/left.png').scaledToWidth(200)
@@ -56,6 +59,8 @@ class MyMain(MyMainGUI):
     def __init__(self, parent=None):
         super().__init__(parent)
 
+        self.questionBtn.clicked.connect(self.btn_clicked)
+
         # video 스레드
         self.th = Worker(parent=self)
         self.th.detect_changed.connect(self.detect_update)  # custom signal from worker thread to main thread
@@ -64,6 +69,11 @@ class MyMain(MyMainGUI):
         self.th.working = True
         
         self.show()
+
+    # 질문 버튼
+    def btn_clicked(self):
+        self.question_cnt = 30
+        self.userEmoticon.setPixmap(self.question)
 
     @pyqtSlot(str)
     def detect_update(self, msg):
@@ -77,6 +87,10 @@ class MyMain(MyMainGUI):
 
     @pyqtSlot(str)
     def state_update(self, msg):
+        self.question_cnt -= 1
+        if self.question_cnt > 0:
+            return
+
         if msg == "1":
             self.userEmoticon.setPixmap(self.neutral)
         elif msg == "2":
@@ -110,7 +124,6 @@ class Worker(QThread):
         self.wait()
 
     def run(self):
-
         md = detector.MyDetector()
         md.video(self.detect, self.detect_changed, self.state, self.state_changed)
 
