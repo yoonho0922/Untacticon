@@ -35,8 +35,8 @@ class MyDetector:
     y_gesture_threshold = 80  # Yes Gesture Threshold
 
     gesture = False
-    x_movement = 0
-    y_movement = 0
+    x_movement = 1
+    y_movement = 1
     gesture_show = 20  # number of frames a gesture is shown
 
     stop_cnt = 0
@@ -198,12 +198,14 @@ class MyDetector:
                 a, b = self.get_coords(p0_center), self.get_coords(p1_center)
 
                 ## 움직임 최소화하기
-                if abs(a[0] - b[0]) > 5 or abs(
-                        a[1] - b[1]) > 5 and self.x_movement > 0 and self.y_movement > 0:  # 이것에 대한 임계값은 해보면서 계속 찾아보기
+                if abs(a[0] - b[0]) > 5 or abs(a[1] - b[1]) > 5 and self.x_movement > 0 and self.y_movement > 0:  # 이것에 대한 임계값은 해보면서 계속 찾아보기
                     self.x_movement += abs(a[0] - b[0])
                     self.y_movement += abs(a[1] - b[1])
                     self.gradient_a += (self.x_movement / self.y_movement) + 1
                     self.gradient_b += (self.y_movement / self.x_movement) + 1
+                    self.stop_cnt = 0  # 움직임 감지 되었다면 count 초기화
+                else :
+                    self.stop_cnt += 1  # 움직임 감지 안될 때 count 진행
 
                 ## movement 글씨로 표시
                 text = 'x_movement: ' + str(self.x_movement)
@@ -227,7 +229,7 @@ class MyDetector:
                         self.a_cot = abs(a_up[0] - a_down[0]) / abs(a_up[1] - a_down[1]) * 100
                         self.b_cot = abs(b_up[0] - b_down[0]) / abs(b_up[1] - b_down[1]) * 100
 
-                        if abs(self.a_cot - self.b_cot) > 6  and self.maximum(self.gradient_a / self.gradient_b, self.gradient_b / self.gradient_a) < 8 and self.keep_cnt <= 0:
+                        if abs(self.a_cot - self.b_cot) > 6 and abs(self.a_cot - self.b_cot) < 20 and self.maximum(self.gradient_a / self.gradient_b, self.gradient_b / self.gradient_a) < 8 and self.keep_cnt <= 0:
                             self.gesture = 'Doubt'
                             self.keep_cnt = 20
                             self.state = 2  # Doubt
@@ -272,7 +274,7 @@ class MyDetector:
                     self.gradient_b = 1
                     self.stop_cnt = 0
 
-            self.stop_cnt += 1
+            # self.stop_cnt += 1
             self.keep_cnt = self.keep_cnt - 1
             ###
 
