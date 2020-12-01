@@ -103,12 +103,6 @@ class MyDetector:
             self.COUNTER = 0
             self.state = 1
 
-        # 화면에 표시
-        # cv2.putText(frame, "COUNTER: {}".format(self.COUNTER), (10, 30),
-        #             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-        # cv2.putText(frame, "USER STATE: {}".format(self.STATE), (300, 30),
-        #             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-
     def video(self, detect, detect_changed, state, state_changed):
         ###
         lk_params = dict(winSize=(15, 15),
@@ -131,17 +125,17 @@ class MyDetector:
         while True:
 
             # 인식 여부 (detect) 관련
-            detect = "0"
+            if self.keep_cnt <= 0 :
+                detect = "0"
 
             # 자리 비움 관련
             self.LEFT_COUNTER += 1
             if self.LEFT_COUNTER > self.SLEEP_CONSEC_FRAMES:
                 state = 4
                 state_changed.emit('{}'.format(state))
-            ###
+
             ret, old_frame = cap.read()
             old_gray = cv2.cvtColor(old_frame, cv2.COLOR_BGR2GRAY)  # from color to black and white
-            ###
 
             ret, frame = cap.read()
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -164,14 +158,10 @@ class MyDetector:
                 detect = "1"
                 self.LEFT_COUNTER = 0
 
-                ###
                 self.x_center, self.y_center = shape[30]  # 34는 너무 콧구멍
                 self.x_up, self.y_up = shape[28]
                 self.x_down, self.y_down = shape[8]
-                ###
 
-                ##### 1. 들여쓰기 부분 수정 (하나 더 안으로 들어가 있었음) #####
-                ###
                 ## 찾은 좌표 사용하여 광학 흐름 측정하기
                 face_up = self.x_up, self.y_up
                 p0_up = np.array([[face_up]], np.float32)
@@ -184,17 +174,16 @@ class MyDetector:
                 p1_center, st, err = cv2.calcOpticalFlowPyrLK(old_gray, gray, p0_center, None, **lk_params)
                 p1_down, st, err = cv2.calcOpticalFlowPyrLK(old_gray, gray, p0_down, None, **lk_params)
 
-                cv2.circle(frame, self.get_coords(p0_up), 3, (0, 255, 0))
-                cv2.circle(frame, self.get_coords(p1_up), 3, (255, 0, 0), -1)  # 파란색이 따라다니는 점
-                cv2.circle(frame, self.get_coords(p0_center), 3, (0, 0, 255))  # 빨간색이 나한테 붙어있는 점
-                cv2.circle(frame, self.get_coords(p1_center), 3, (255, 0, 0), -1)  # 파란색이 따라다니는 점
-                cv2.circle(frame, self.get_coords(p0_down), 3, (0, 255, 0))
-                cv2.circle(frame, self.get_coords(p1_down), 3, (255, 0, 0), -1)  # 파란색이 따라다니는 점
+                # cv2.circle(frame, self.get_coords(p0_up), 3, (0, 255, 0))
+                # cv2.circle(frame, self.get_coords(p1_up), 3, (255, 0, 0), -1)
+                # cv2.circle(frame, self.get_coords(p0_center), 3, (0, 0, 255))
+                # cv2.circle(frame, self.get_coords(p1_center), 3, (255, 0, 0), -1)
+                # cv2.circle(frame, self.get_coords(p0_down), 3, (0, 255, 0))
+                # cv2.circle(frame, self.get_coords(p1_down), 3, (255, 0, 0), -1)
 
                 ## 정수로 좌표화
                 a_up, b_up = self.get_coords(p0_up), self.get_coords(p1_up)
                 a_down, b_down = self.get_coords(p0_down), self.get_coords(p1_down)
-
                 a, b = self.get_coords(p0_center), self.get_coords(p1_center)
 
                 ## 움직임 최소화하기
@@ -208,10 +197,10 @@ class MyDetector:
                     self.stop_cnt += 1  # 움직임 감지 안될 때 count 진행
 
                 ## movement 글씨로 표시
-                text = 'x_movement: ' + str(self.x_movement)
-                if not self.gesture: cv2.putText(frame, text, (50, 50), self.font, 0.8, (0, 0, 255), 2)  # x_movement 글씨 표시
-                text = 'y_movement: ' + str(self.y_movement)
-                if not self.gesture: cv2.putText(frame, text, (50, 100), self.font, 0.8, (0, 0, 255), 2)  # y_movement 글씨 표시
+                # text = 'x_movement: ' + str(self.x_movement)
+                # if not self.gesture: cv2.putText(frame, text, (50, 50), self.font, 0.8, (0, 0, 255), 2)  # x_movement 글씨 표시
+                # text = 'y_movement: ' + str(self.y_movement)
+                # if not self.gesture: cv2.putText(frame, text, (50, 100), self.font, 0.8, (0, 0, 255), 2)  # y_movement 글씨 표시
 
                 if self.x_movement > self.x_gesture_threshold or self.y_movement > self.y_gesture_threshold:
                     if self.x_movement > self.x_gesture_threshold and self.keep_cnt <= 0:
@@ -234,49 +223,33 @@ class MyDetector:
                             self.keep_cnt = 20
                             self.state = 2  # Doubt
 
-                text = 'gradient_a: ' + str(self.gradient_a)
-                if not self.gesture: cv2.putText(frame, text, (50, 150), self.font, 0.8, (255, 0, 0), 2)
-                text = 'gradient_b: ' + str(self.gradient_b)
-                if not self.gesture: cv2.putText(frame, text, (50, 200), self.font, 0.8, (255, 0, 0), 2)
-                text = 'Doubt: ' + str(abs(self.a_cot - self.b_cot))
-                if not self.gesture: cv2.putText(frame, text, (50, 250), self.font, 0.8, (255, 0, 0), 2)
-                ## gesture 임계값을 넘기면 긍정 및 부정 인식
-                # 도리도리는 150 / 끄덕끄덕은 30 정도 움직임
-                # 원래는 gesture_threshold 값을 가짐
-                # 반응이 아니어도 움직임이 허용되는 선의 범위 안에서 gesture_threshold를 정해야 함
+                # text = 'gradient_a: ' + str(self.gradient_a)
+                # if not self.gesture: cv2.putText(frame, text, (50, 150), self.font, 0.8, (255, 0, 0), 2)
+                # text = 'gradient_b: ' + str(self.gradient_b)
+                # if not self.gesture: cv2.putText(frame, text, (50, 200), self.font, 0.8, (255, 0, 0), 2)
+                # text = 'Doubt: ' + str(abs(self.a_cot - self.b_cot))
+                # if not self.gesture: cv2.putText(frame, text, (50, 250), self.font, 0.8, (255, 0, 0), 2)
 
-                # 의문 상황은 대각선으로 움직이는 것을 포착하면 되는데
-                # 이 상황이 위에 상황과 겹쳐지면 어떻게 해야 하나를 지금 생각 중
-                # 좀 더 강력하게 구분될 수 있는 상황을 만들어야겠음
-                # 각 증분에 대한 기울기
-
-                ## 긍정 혹은 부정 표현이 감지되었을 때 이를 얼마나 유지할 것인가
                 if self.gesture and self.gesture_show > 0:
-                    cv2.putText(frame, 'Gesture Detected: ' + self.gesture, (50, 50), self.font, 1.2, (0, 0, 255), 3)
-                    self.gesture_show -= 1  # 1씩 감소
+                    # cv2.putText(frame, 'Gesture Detected: ' + self.gesture, (50, 50), self.font, 1.2, (0, 0, 255), 3)
+                    self.gesture_show -= 1
 
-                ## 0까지 갔을 때는 다시 특정 임계값으로 올린 다음에 다시 시작
                 if self.gesture_show == 0:
                     self.gesture = False
                     self.x_movement = 1
-                    self.y_movement = 1  # 움직임이 없으면 0으로 초기화시키네
+                    self.y_movement = 1
                     self.gradient_a = 1
                     self.gradient_b = 1
                     self.gesture_show = 20  # number of frames a gesture is shown
 
-                ##### 고개가 자연스럽게 움직일 수 있는 부분에서 허용되는 범위 #####
-                # 자연스럽게 고개가 움직이는 부분은 어떻게 할 것이냐
-                # 근데 이 count가 Gesture를 파악하는데 걸림돌이 되면 안된다
-                if self.stop_cnt > 30:  # 30 정도면 되는 것이냐
+                if self.stop_cnt > 30:
                     self.x_movement = 1
                     self.y_movement = 1
                     self.gradient_a = 1
                     self.gradient_b = 1
                     self.stop_cnt = 0
 
-            # self.stop_cnt += 1
-            self.keep_cnt = self.keep_cnt - 1
-            ###
+            self.keep_cnt -= 1
 
             state_changed.emit('{}'.format(self.state))
             detect_changed.emit('{}'.format(detect))
@@ -294,14 +267,8 @@ class MyDetector:
             if key == ord("q"):
                 break
 
-
-
-## __main__
-
 if __name__=='__main__':
     q = Queue()
-    # t = threading.Thread(target=MyDetector.video(q), args=(q,))
-    # t.start()
     md = MyDetector()
     md.video(q)
 
