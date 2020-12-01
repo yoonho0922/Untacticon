@@ -15,7 +15,7 @@ class MyDetector:
 
     # left 관련
     LEFT_COUNTER = 0
-    SLEEP_CONSEC_FRAMES = 100
+    LEFT_CONSEC_FRAMES = 100
 
     #### sleep 관련
     COUNTER = 0
@@ -128,11 +128,7 @@ class MyDetector:
             if self.keep_cnt <= 0 :
                 detect = "0"
 
-            # 자리 비움 관련
-            self.LEFT_COUNTER += 1
-            if self.LEFT_COUNTER > self.SLEEP_CONSEC_FRAMES:
-                state = 4
-                state_changed.emit('{}'.format(state))
+
 
             ret, old_frame = cap.read()
             old_gray = cv2.cvtColor(old_frame, cv2.COLOR_BGR2GRAY)  # from color to black and white
@@ -251,18 +247,17 @@ class MyDetector:
 
             self.keep_cnt -= 1
 
+            # 자리 비움 관련
+            self.LEFT_COUNTER += 1
+
+            if self.LEFT_COUNTER > self.LEFT_CONSEC_FRAMES:
+                self.state = 4
+
             state_changed.emit('{}'.format(self.state))
             detect_changed.emit('{}'.format(detect))
 
             cv2.imshow("webcam", frame)
             key = cv2.waitKey(1) & 0xFF
-
-            if key == ord("1"):
-                state = 1
-                state_changed.emit('{}'.format(state))
-            if key == ord("2"):
-                sec = 2
-                state_changed.emit('{}'.format(state))
 
             if key == ord("q"):
                 break
