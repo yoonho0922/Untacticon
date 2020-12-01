@@ -30,7 +30,8 @@ class MyDetector:
     # define movement threshodls
     max_head_movement = 20
     movement_threshold = 50
-    gesture_threshold = 100
+    x_gesture_threshold = 80
+    y_gesture_threshold = 80  # Yes Gesture Threshold
 
     gesture = False
     x_movement = 0
@@ -162,13 +163,12 @@ class MyDetector:
                 self.LEFT_COUNTER = 0
 
                 ###
-                shape = predictor(gray, rect)
-                shape = face_utils.shape_to_np(shape)
                 self.x_center, self.y_center = shape[30]  # 34는 너무 콧구멍
                 self.x_up, self.y_up = shape[28]
                 self.x_down, self.y_down = shape[8]
                 ###
 
+                ##### 1. 들여쓰기 부분 수정 (하나 더 안으로 들어가 있었음) #####
                 ###
                 ## 찾은 좌표 사용하여 광학 흐름 측정하기
                 face_up = self.x_up, self.y_up
@@ -205,20 +205,16 @@ class MyDetector:
 
                 ## movement 글씨로 표시
                 text = 'x_movement: ' + str(self.x_movement)
-                if not self.gesture: cv2.putText(frame, text, (50, 50), self.font, 0.8, (0, 0, 255),
-                                                 2)  # x_movement 글씨 표시
+                if not self.gesture: cv2.putText(frame, text, (50, 50), self.font, 0.8, (0, 0, 255), 2)  # x_movement 글씨 표시
                 text = 'y_movement: ' + str(self.y_movement)
-                if not self.gesture: cv2.putText(frame, text, (50, 100), self.font, 0.8, (0, 0, 255),
-                                                 2)  # y_movement 글씨 표시
+                if not self.gesture: cv2.putText(frame, text, (50, 100), self.font, 0.8, (0, 0, 255), 2)  # y_movement 글씨 표시
 
-                if self.x_movement > self.gesture_threshold or self.y_movement > self.gesture_threshold:
-                    if self.x_movement > self.gesture_threshold and self.keep_cnt <= 0:
-                        print(">>> Gesture is No, x_movement is ", self.x_movement)
+                if self.x_movement > self.x_gesture_threshold or self.y_movement > self.y_gesture_threshold:
+                    if self.x_movement > self.x_gesture_threshold and self.keep_cnt <= 0:
                         self.gesture = 'No'
                         self.keep_cnt = 20
 
-                    if self.y_movement > self.gesture_threshold and self.keep_cnt <= 0:
-                        print(">>> Gesture is Yes, y movement is ", self.y_movement)
+                    if self.y_movement > self.y_gesture_threshold and self.keep_cnt <= 0:
                         self.gesture = 'Yes'
                         self.keep_cnt = 20
 
@@ -227,11 +223,9 @@ class MyDetector:
                         self.a_cot = abs(a_up[0] - a_down[0]) / abs(a_up[1] - a_down[1]) * 100
                         self.b_cot = abs(b_up[0] - b_down[0]) / abs(b_up[1] - b_down[1]) * 100
 
-                        if abs(self.a_cot - self.b_cot) > 10 and abs(self.a_cot - self.b_cot) < 20 \
-                                and self.maximum(self.gradient_a / self.gradient_b,
-                                                 self.gradient_b / self.gradient_a) < 8 and self.keep_cnt <= 0:
+                        if abs(self.a_cot - self.b_cot) > 6  and self.maximum(self.gradient_a / self.gradient_b, self.gradient_b / self.gradient_a) < 8 and self.keep_cnt <= 0:
                             self.gesture = 'Doubt'
-                            self.keep_cnt = 10
+                            self.keep_cnt = 20
 
                 text = 'gradient_a: ' + str(self.gradient_a)
                 if not self.gesture: cv2.putText(frame, text, (50, 150), self.font, 0.8, (255, 0, 0), 2)
@@ -239,7 +233,7 @@ class MyDetector:
                 if not self.gesture: cv2.putText(frame, text, (50, 200), self.font, 0.8, (255, 0, 0), 2)
                 text = 'Doubt: ' + str(abs(self.a_cot - self.b_cot))
                 if not self.gesture: cv2.putText(frame, text, (50, 250), self.font, 0.8, (255, 0, 0), 2)
-                ## gesture 임계값을 넘기면 긍정 및 부정 인식식
+                ## gesture 임계값을 넘기면 긍정 및 부정 인식
                 # 도리도리는 150 / 끄덕끄덕은 30 정도 움직임
                 # 원래는 gesture_threshold 값을 가짐
                 # 반응이 아니어도 움직임이 허용되는 선의 범위 안에서 gesture_threshold를 정해야 함
@@ -273,9 +267,9 @@ class MyDetector:
                     self.gradient_b = 1
                     self.stop_cnt = 0
 
-                self.stop_cnt += 1
-                self.keep_cnt = self.keep_cnt - 1
-                ###
+            self.stop_cnt += 1
+            self.keep_cnt = self.keep_cnt - 1
+            ###
 
             detect_changed.emit('{}'.format(detect))
 
