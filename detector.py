@@ -11,12 +11,13 @@ import numpy as np
 
 class MyDetector:
 
+    state = 1
+
     # left 관련
     LEFT_COUNTER = 0
     SLEEP_CONSEC_FRAMES = 100
 
     #### sleep 관련
-    STATE = "normal"
     COUNTER = 0
     TOTAL = 0
 
@@ -96,15 +97,11 @@ class MyDetector:
 
             # 눈을 계속 감고 있는 경우 -> 졸음이라고 판단
             if self.COUNTER >= self.SLEEP_CONSEC_FRAMES:
-                self.STATE = "sleep!"
-                state = 3
-                state_changed.emit('{}'.format(state))
+                self.state = 3
 
         else:  # 눈을 떴을 때
             self.COUNTER = 0
-            self.STATE = "normal"
-            state = 1
-            state_changed.emit('{}'.format(state))
+            self.state = 1
 
         # 화면에 표시
         # cv2.putText(frame, "COUNTER: {}".format(self.COUNTER), (10, 30),
@@ -155,8 +152,13 @@ class MyDetector:
                 shape = predictor(gray, rect)
                 shape = face_utils.shape_to_np(shape)
 
+                # 일반 상태로
+                if self.keep_cnt <= 0 :
+                    self.state = 1
+
                 # 졸음 감지
-                self.detect_sleep(shape, frame, state, state_changed)
+                if self.keep_cnt <= 0 :
+                    self.detect_sleep(shape, frame, state, state_changed)
 
                 # 인식 됐을 때 관련 변수 변경
                 detect = "1"
@@ -213,10 +215,12 @@ class MyDetector:
                     if self.x_movement > self.x_gesture_threshold and self.keep_cnt <= 0:
                         self.gesture = 'No'
                         self.keep_cnt = 20
+                        self.state = 6  # No
 
                     if self.y_movement > self.y_gesture_threshold and self.keep_cnt <= 0:
                         self.gesture = 'Yes'
                         self.keep_cnt = 20
+                        self.state = 5  # Yes
 
                 else:
                     if abs(a_up[0] - a_down[0]) >= 1 and abs(b_up[0] - b_down[0]) >= 1:
@@ -226,6 +230,7 @@ class MyDetector:
                         if abs(self.a_cot - self.b_cot) > 6  and self.maximum(self.gradient_a / self.gradient_b, self.gradient_b / self.gradient_a) < 8 and self.keep_cnt <= 0:
                             self.gesture = 'Doubt'
                             self.keep_cnt = 20
+                            self.state = 2  # Doubt
 
                 text = 'gradient_a: ' + str(self.gradient_a)
                 if not self.gesture: cv2.putText(frame, text, (50, 150), self.font, 0.8, (255, 0, 0), 2)
@@ -271,6 +276,7 @@ class MyDetector:
             self.keep_cnt = self.keep_cnt - 1
             ###
 
+            state_changed.emit('{}'.format(self.state))
             detect_changed.emit('{}'.format(detect))
 
             cv2.imshow("webcam", frame)
