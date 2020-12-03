@@ -4,7 +4,7 @@
 
 **제 2회 SM AI 경진 대회 참여 프로젝트**
 
-<img src = "https://user-images.githubusercontent.com/55044278/100981443-29eba480-358a-11eb-8723-9309025aaa73.jpg" height = "300px">
+<img src = "https://user-images.githubusercontent.com/55044278/100981443-29eba480-358a-11eb-8723-9309025aaa73.jpg" height = "450px">
 
 ----------
 
