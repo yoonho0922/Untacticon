@@ -73,31 +73,31 @@
 
     ![yes_motion.gif](https://github.com/yoonho0922/Untacticon/blob/master/readme_util/yes_motion.gif?raw=true)
 
-- ```부정 표현```
+- **부정 표현**
 
   - 학습자가 현재 고개를 젓고 있는 상태
 
     ![no_motion.gif](https://github.com/yoonho0922/Untacticon/blob/master/readme_util/no_motion.gif?raw=true)
 
-- ```졸음 상태```
+- **졸음 상태**
 
   - 학습자가 현재 졸고 있는 상태
 
     ![sleep_motion.gif](https://github.com/yoonho0922/Untacticon/blob/master/readme_util/sleep_motion.gif?raw=true)
 
-- ```의문 상태```
+- **의문 상태**
 
   - 학습자가 현재 학습 내용에 의문이 있는 상태
 
     ![doubt_motion.gif](https://github.com/yoonho0922/Untacticon/blob/master/readme_util/doubt_motion.gif?raw=true)
 
-- ```자리 비움 상태```
+- **자리 비움 상태**
 
   - 학습자가 현재 자리를 비위 모듈이 사람을 인식하지 못하는 상태
 
     ![left_motion.gif](https://github.com/yoonho0922/Untacticon/blob/master/readme_util/left_motion.gif?raw=true)
 
-- ```질문 버튼```
+- **질문 버튼**
 
   - 학습자가 현재 질문이 있는 상태
 
