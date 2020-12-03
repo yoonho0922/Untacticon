@@ -113,4 +113,4 @@
 
 **7. 설명 동영상 링크**
 
-- https://youtu.be/Ry_QrVTIT5k
+[![image](https://user-images.githubusercontent.com/55044278/101017572-9c21b080-35ad-11eb-894a-93fe443ab318.png)](https://youtu.be/Ry_QrVTIT5k)
