@@ -89,7 +89,7 @@
 
   - 학습자가 현재 졸고 있는 상태
 
-    ![sleep_motion.gif](https://github.com/yoonho0922/Untacticon/blob/master/readme_util/sleep_motion.gif?raw=true)
+    ![GIF 2020-12-03 오후 7-56-05](https://user-images.githubusercontent.com/55044278/101001720-d76ab200-35a2-11eb-871d-feadc2fd5c74.gif)
 
 - **자리 비움 상태**
 
