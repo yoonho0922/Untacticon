@@ -78,12 +78,12 @@
   - 학습자가 현재 고개를 젓고 있는 상태
 
     ![no_motion.gif](https://github.com/yoonho0922/Untacticon/blob/master/readme_util/no_motion.gif?raw=true)
-    
+
  - **의문 상태**
 
-  - 학습자가 현재 학습 내용에 의문이 있는 상태
+     - 학습자가 현재 학습 내용에 의문이 있는 상태
 
-    ![doubt_motion.gif](https://github.com/yoonho0922/Untacticon/blob/master/readme_util/doubt_motion.gif?raw=true)
+       ![doubt_motion.gif](https://github.com/yoonho0922/Untacticon/blob/master/readme_util/doubt_motion.gif?raw=true)
 
 - **졸음 상태**
 
@@ -108,3 +108,9 @@
 **6. 기대 효과**
 
 ![image](https://user-images.githubusercontent.com/55044278/100985320-2f97b900-358f-11eb-8be6-ad5955710d16.png)
+
+----------
+
+**7. 설명 동영상 링크**
+
+- https://youtu.be/Ry_QrVTIT5k
