@@ -2,9 +2,7 @@
 
 ### 언택티콘 (2020.10 ~ 2020.12)
 
-**제 2회 SM AI 경진 대회 참여 프로젝트**
-
-<img src = "https://user-images.githubusercontent.com/55044278/100981443-29eba480-358a-11eb-8723-9309025aaa73.jpg" height = "450px">
+**2020학년도 제 2회 SM AI 경진 대회 최우수상**
 
 ----------
 
@@ -67,37 +65,37 @@
 
   - 학습자가 현재 고개를 끄덕이고 있는 상태
 
-    ![yes_motion.gif](https://github.com/yoonho0922/Untacticon/blob/master/readme_util/yes_motion.gif?raw=true)
+    <p><img src="https://github.com/yoonho0922/Untacticon/blob/master/readme_util/yes_motion.gif?raw=true" width="30%" height="30%"></p>
 
 - **부정 표현**
 
   - 학습자가 현재 고개를 젓고 있는 상태
 
-    ![no_motion.gif](https://github.com/yoonho0922/Untacticon/blob/master/readme_util/no_motion.gif?raw=true)
+    <p><img src="https://github.com/yoonho0922/Untacticon/blob/master/readme_util/no_motion.gif?raw=true" width="30%" height="30%"></p>
 
  - **의문 상태**
 
      - 학습자가 현재 학습 내용에 의문이 있는 상태
 
-       ![doubt_motion.gif](https://github.com/yoonho0922/Untacticon/blob/master/readme_util/doubt_motion.gif?raw=true)
+       <p><img src="https://github.com/yoonho0922/Untacticon/blob/master/readme_util/doubt_motion.gif?raw=true" width="30%" height="30%"></p>
 
 - **졸음 상태**
 
   - 학습자가 현재 졸고 있는 상태
 
-    ![GIF 2020-12-03 오후 7-56-05](https://user-images.githubusercontent.com/55044278/101001720-d76ab200-35a2-11eb-871d-feadc2fd5c74.gif)
+    <p><img src="https://user-images.githubusercontent.com/55044278/101001720-d76ab200-35a2-11eb-871d-feadc2fd5c74.gif" width="30%" height="30%"></p>
 
 - **자리 비움 상태**
 
   - 학습자가 현재 자리를 비 모듈이 사람을 인식하지 못하는 상태
 
-    ![left_motion.gif](https://github.com/yoonho0922/Untacticon/blob/master/readme_util/left_motion.gif?raw=true)
+    <p><img src="https://github.com/yoonho0922/Untacticon/blob/master/readme_util/left_motion.gif?raw=true" width="30%" height="30%"></p>
 
 - **질문 버튼**
 
   - 학습자가 현재 질문이 있는 상태
 
-    ![question_motion.gif](https://github.com/yoonho0922/Untacticon/blob/master/readme_util/question_motion.gif?raw=true)
+    <p><img src="https://github.com/yoonho0922/Untacticon/blob/master/readme_util/question_motion.gif?raw=true" width="30%" height="30%"></p>
 
 ----------
 
