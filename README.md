@@ -1,10 +1,14 @@
-# Untacticon
+# Untacticon  
 
-### 언택티콘 (2020.10 ~ 2020.12)
+기간: 2020.10 ~ 2020.12
 
-**2020학년도 제 2회 SM AI 경진 대회 참여 프로젝트**
+[인터뷰 - [학생] '비대면 강의 중 학습자 상태 파악 AI 모듈' 개발](https://www.smu.ac.kr/webzine/sm-people.do?mode=view&articleNo=714722&article.offset=0&articleLimit=9)
 
-----------
+[기사 - 상명대 학생들, 비대면 강의 중 학습자 상태 파악 AI 모듈 개발](http://www.dailysmart.co.kr/news/articleView.html?idxno=39145)
+
+----
+
+
 
 **주제** : 비대면 강의 중 학습자 상태 파악 AI 모듈
 
@@ -30,11 +34,11 @@
 - **학습자의 반응을 즉각적으로 파악**
 
   - ```긍정``` / ```부정```   : 학습자의 고개 끄덕임 / 젓는 여부
-  
+
   - ```의문``` : 학습자의 학습 내용 이해 여부
-  
+
   - ```졸음``` : 학습자의 졸음 여부 
-  
+
 - **반응의 종류를 이모티콘으로 표시**
 
 - **질문 버튼을 통해 질문 의사 표시**
@@ -75,9 +79,9 @@
 
  - **의문 상태**
 
-     - 학습자가 현재 학습 내용에 의문이 있는 상태
+   - 학습자가 현재 학습 내용에 의문이 있는 상태
 
-       <p><img src="https://github.com/yoonho0922/Untacticon/blob/master/readme_util/doubt_motion.gif?raw=true" width="30%" height="30%"></p>
+     <p><img src="https://github.com/yoonho0922/Untacticon/blob/master/readme_util/doubt_motion.gif?raw=true" width="30%" height="30%"></p>
 
 - **졸음 상태**
 
